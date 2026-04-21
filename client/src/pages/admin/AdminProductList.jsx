@@ -19,6 +19,7 @@ const AdminProductList = () => {
     countInStock: '',
     isFeatured: false,
   });
+  const [uploading, setUploading] = useState(false);
 
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -93,6 +94,32 @@ const AdminProductList = () => {
       fetchProducts();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Error saving product');
+    }
+  };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const formDataUpload = new FormData();
+    formDataUpload.append('image', file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post('http://localhost:5000/api/upload', formDataUpload, config);
+
+      setFormData({ ...formData, image: `http://localhost:5000${data}` });
+      setUploading(false);
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error(error);
+      setUploading(false);
+      toast.error('File upload failed');
     }
   };
 
@@ -176,18 +203,32 @@ const AdminProductList = () => {
             <div className="absolute inset-0 bg-primary-dark/40 backdrop-blur-md" onClick={resetForm}></div>
             <div className="relative bg-white w-full max-w-4xl rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row h-full max-h-[800px]">
                <div className="w-full md:w-2/5 bg-primary-light flex flex-col items-center justify-center p-12 text-center gap-6">
-                  <div className="w-full aspect-square bg-white rounded-3xl overflow-hidden shadow-lg flex items-center justify-center relative group cursor-pointer">
-                     {formData.image ? (
+                  <div 
+                     className="w-full aspect-square bg-white rounded-3xl overflow-hidden shadow-lg flex items-center justify-center relative group cursor-pointer border-2 border-dashed border-gray-100 hover:border-primary/20 transition-all"
+                     onClick={() => document.getElementById('image-file').click()}
+                  >
+                     {uploading ? (
+                        <div className="flex flex-col items-center gap-2 text-primary animate-pulse">
+                           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                           <p className="text-xs font-bold">Uploading...</p>
+                        </div>
+                     ) : formData.image ? (
                         <img src={formData.image} className="w-full h-full object-cover" />
                      ) : (
                         <div className="flex flex-col items-center gap-2 text-gray-300">
                            <Camera size={48} />
-                           <p className="text-sm font-bold">Image Preview</p>
+                           <p className="text-sm font-bold">Upload Image</p>
                         </div>
                      )}
-                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white font-bold transition-all">
-                        Change URL
+                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white font-bold transition-all text-xs">
+                        {formData.image ? 'Change Image' : 'Select Image'}
                      </div>
+                     <input 
+                        type="file" 
+                        id="image-file" 
+                        className="hidden" 
+                        onChange={uploadFileHandler} 
+                     />
                   </div>
                   <h3 className="text-2xl font-bold text-primary">{editingProduct ? 'Edit Nutty Goodness' : 'Add New Product'}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">Ensure all details are accurate for the best shopping experience.</p>

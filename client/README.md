@@ -1,16 +1,29 @@
-# React + Vite
+# NuttyBliss Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend portion of the NuttyBliss eCommerce platform.
 
-Currently, two official plugins are available:
+## 🎨 Design & UI
+- **Framework:** React 19 + Vite
+- **Styling:** Tailwind CSS v4 (PostCSS mode)
+- **Animations:** Framer Motion for premium micro-interactions
+- **Icons:** Lucide React
+- **State Management:** Redux Toolkit
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠 Setup & Development
 
-## React Compiler
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+2. Run development server:
+   ```bash
+   npm run dev
+   ```
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📄 Tailwind v4 Configuration
+In v4, we use the CSS-first approach. The main styles are in `src/index.css`.
+Custom theme extensions (colors, fonts) are defined in `tailwind.config.js` and imported into CSS using:
+```css
+@config "../tailwind.config.js";
+```
